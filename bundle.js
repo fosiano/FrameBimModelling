@@ -36839,18 +36839,22 @@ const myGrid = {
 	//myBoolean: true,
 	//myString: "lil-gui",
 	step: 1.50,
-  GridMinimumSize:40
+  gridMinimumSize:30,
+  gridColor:0x808080
 };
 
 gui.add( myGrid, 'step', 0.05, 5.0, 0.05);  
-gui.add( myGrid, 'GridMinimumSize', 1.00, 100, 1.00);   
+gui.add( myGrid, 'gridMinimumSize', 1.00, 100, 1.00);  
+gui.addColor(myGrid, 'gridColor').onChange(() => {
+	grid.material.color.set(myGrid.gridColor);
+});
 
 const Gridstep = myGrid.step;
 const GridMinSize = 62.00;
-//const Griddivisions = 2.00*(Math.floor(Gridsize/Gridstep/4.00)*Gridstep+1.00);
+
 
 const GridcolorCenterLine = 0x808080;//= ;
-const GridcolorGrid = 0x808080;
+const GridcolorGrid = myGrid.gridColor;
 
 
 function GridDivide(GridMinSize, step){
@@ -36883,12 +36887,9 @@ function createGridPlane(){
   return plane;
 }
 
-
-
-createGridHelper();
+const grid = createGridHelper();
 const gridPlane = createGridPlane();
-
-const axesHelper = new AxesHelper( actualGridSize*10.0 );
+const axesHelper = new AxesHelper( actualGridSize*0.20 );
 axesHelper.renderOrder = 2;
 scene.add( axesHelper );
 
