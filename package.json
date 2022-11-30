@@ -1,0 +1,29 @@
+{
+  "name": "framebimmodelling",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fosiano/FrameBimModelling.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fosiano/FrameBimModelling/issues"
+  },
+  "homepage": "https://github.com/fosiano/FrameBimModelling#readme",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "rollup": "^3.5.0"
+  },
+  "dependencies": {
+    "camera-controls": "^1.37.4",
+    "three": "^0.146.0"
+  }
+}

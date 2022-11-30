@@ -1,0 +1,101 @@
+* {
+	margin: 0;
+	padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    
+}
+
+:root{
+    --blln-width: 120px;
+    --blln-height: 60px;
+    --blln-ArrwOffst: 10px;
+    --blln-color: rgba(5, 134, 48, 0.25);
+    --tip-text-height: 16px;
+    --tip-text-padding: 7px;
+    --tip-height: calc(var(--tip-text-height) + 2*var(--tip-text-padding));
+
+}
+
+#three-canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    outline: red;
+    cursor:default;
+}
+
+.label-container {
+    /* border: 1px solid red; */
+    background:transparent;
+    width: var(--blln-width);
+    height: var(--blln-height); 
+    left: calc(var(--blln-width)/2 - var(--blln-ArrwOffst));
+    top: calc((-1)*var(--blln-height)/2);
+    pointer-events: all;
+}
+
+.label-container::after{
+    content: "";
+    position: absolute;
+    left: var(--blln-ArrwOffst);
+    top: var(--tip-height);
+    width: 0;
+    height: 0;
+    border-left: calc((var(--blln-height) - var(--tip-height))/1.4) solid var(--blln-color);
+    border-right: calc((var(--blln-height) - var(--tip-height))/1.4) solid transparent;  
+    border-bottom: calc(var(--blln-height) - var(--tip-height) - 2px) solid transparent; 
+  }
+
+
+.baloon-label {
+    position: absolute;
+    width: var(--blln-width);
+    height:  var(--tip-height);
+    background: var(--blln-color);
+    border-radius: 0.3rem;
+    pointer-events: all;
+    color:black;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: var(--tip-text-height);
+    text-align:center;
+    padding: var(--tip-text-padding);
+}
+
+
+
+
+.tip {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    pointer-events: all;
+    text-align: left;
+    top: -8px;
+    left: -40px; 
+    pointer-events: all;
+    z-index: 1;
+    text-align: right;
+    color:black;
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+
+
+button {
+    background: tomato;
+    padding: 15px 30px;
+    color: #fff;
+    font-size: 15px;
+    border: none;
+    display: block;
+    margin: 0 auto 30px;
+  }
+
+/*
+.base-label:hover .label {
+    visibility: visible;
+  }
+  */
