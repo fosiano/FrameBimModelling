@@ -108,53 +108,49 @@ const myGrid = {
 	//myString: "lil-gui",
 	step: 1.50,
   gridMinimumSize:30,
-  gridColor:0x808080
+  gridColor:0xb5b5b5
 };
 
-gui.add( myGrid, 'step', 0.05, 5.0, 0.05).onChange(()=>{
-  gridUpdate(myGrid.gridMinimumSize, myGrid.step);
+gui.add( myGrid, 'step', 0.05, 5.0, 0.05).name('Grid Step').onChange(()=>{
+  gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
 });  
-gui.add( myGrid, 'gridMinimumSize', 1.00, 100, 1.00).onChange(()=>{
-  gridUpdate(myGrid.gridMinimumSize, myGrid.step);
+gui.add( myGrid, 'gridMinimumSize', 1.00, 100, 1.00).name('Min Grid Dimension').onChange(()=>{
+  gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
 });    
-gui.addColor(myGrid, 'gridColor').onChange(() => {
-	grid.material.color.set(myGrid.gridColor);
+gui.addColor(myGrid, 'gridColor').name('Grid Color').onChange(() => {
+	//grid.material.color.set(myGrid.gridColor);
+  gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
 })
 
-function gridUpdate(GridMinSize, step){
-  const div=GridMinSize/step;
+function gridUpdate(MinSize, step, color){
+  const div=MinSize/step;
   Griddivisions = CeiltoEven(div);
   actualGridSize = step*Griddivisions;
-  GridcolorCenterLine = myGrid.gridColor;
-  GridcolorGrid = myGrid.gridColor;
+  GridcolorCenterLine = color;
+  GridcolorGrid = color;
   console.log("il numero di suddivisioni è: ", Griddivisions);
   console.log("la dimensione effettiva della griglia è: ", actualGridSize);
   scene.remove(grid);
   grid.dispose();
   grid = createGridHelper();
-  //let gridPlane = createGridPlane();
+  grid.renderOrder = 0;
+  scene.remove(gridPlane);
+  gridPlane.geometry.dispose();
+  gridPlane.material.dispose();
+  gridPlane = createGridPlane();
 }
-
-const Gridstep = myGrid.step;
-const GridMinSize =  myGrid.gridMinimumSize;
-
-
-
-
 
 function CeiltoEven(num){
   const EvenNumber = 2.00*(Math.ceil(num/2.00));
   return EvenNumber;
 }
 
-
-
 function createGridHelper(){
   const grdHlpr = new GridHelper(actualGridSize, Griddivisions,GridcolorCenterLine,GridcolorGrid);
   grdHlpr.rotation.x = Math.PI / 2;
   grdHlpr.position.z = 0;
   grdHlpr.material.depthTest = false;
-  grdHlpr.renderOrder = 0;
+  
   scene.add( grdHlpr );
   return grdHlpr;
 }
@@ -162,10 +158,13 @@ function createGridHelper(){
 function createGridPlane(){
   const grdPln = new PlaneGeometry( actualGridSize, actualGridSize, Griddivisions, Griddivisions );
   const plane = new Mesh( grdPln, gridPlaneMaterial );
-  plane.renderOrder = 2;
+  plane.renderOrder = 0;
   scene.add( plane );
   return plane;
 }
+
+const Gridstep = myGrid.step;
+const GridMinSize =  myGrid.gridMinimumSize;
 
 const div=GridMinSize/Gridstep;
 let Griddivisions = CeiltoEven(div);
@@ -177,6 +176,7 @@ let GridcolorGrid = myGrid.gridColor;
 
 let grid = createGridHelper();
 let gridPlane = createGridPlane();
+
 const axesHelper = new AxesHelper( actualGridSize*0.20 );
 axesHelper.renderOrder = 2;
 scene.add( axesHelper );
@@ -240,6 +240,7 @@ realMesh.scale.y=0.5;
 realMesh.position.x = -0.5;
 realMesh.position.z = 5.5;
 realMesh.rotation.y = Math.PI / 2;
+realMesh.renderOrder=1;
 
 const whiteMesh = new Mesh(geometry, whiteMaterial);
 whiteMesh.position.x -= 10.0;
