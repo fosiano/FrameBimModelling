@@ -111,30 +111,42 @@ const myGrid = {
   gridColor:0x808080
 };
 
-gui.add( myGrid, 'step', 0.05, 5.0, 0.05);  
-gui.add( myGrid, 'gridMinimumSize', 1.00, 100, 1.00);  
+gui.add( myGrid, 'step', 0.05, 5.0, 0.05).onChange(()=>{
+  gridUpdate(myGrid.gridMinimumSize, myGrid.step);
+});  
+gui.add( myGrid, 'gridMinimumSize', 1.00, 100, 1.00).onChange(()=>{
+  gridUpdate(myGrid.gridMinimumSize, myGrid.step);
+});    
 gui.addColor(myGrid, 'gridColor').onChange(() => {
 	grid.material.color.set(myGrid.gridColor);
 })
 
-const Gridstep = myGrid.step;
-const GridMinSize = 62.00;
-
-
-const GridcolorCenterLine = 0x808080;//= ;
-const GridcolorGrid = myGrid.gridColor;
-
-
-function GridDivide(GridMinSize, step){
-  const divisionsNumber = 2.00*(Math.floor(GridMinSize/step/2.00)+1.00);
-  console.log("numero di suddivisioni =", divisionsNumber);
-  return divisionsNumber;
+function gridUpdate(GridMinSize, step){
+  const div=GridMinSize/step;
+  Griddivisions = CeiltoEven(div);
+  actualGridSize = step*Griddivisions;
+  GridcolorCenterLine = myGrid.gridColor;
+  GridcolorGrid = myGrid.gridColor;
+  console.log("il numero di suddivisioni è: ", Griddivisions);
+  console.log("la dimensione effettiva della griglia è: ", actualGridSize);
+  scene.remove(grid);
+  grid.dispose();
+  grid = createGridHelper();
+  //let gridPlane = createGridPlane();
 }
 
-const Griddivisions = GridDivide(GridMinSize, Gridstep);
-const actualGridSize = Gridstep*Griddivisions;
-console.log(Griddivisions);
-console.log(actualGridSize);
+const Gridstep = myGrid.step;
+const GridMinSize =  myGrid.gridMinimumSize;
+
+
+
+
+
+function CeiltoEven(num){
+  const EvenNumber = 2.00*(Math.ceil(num/2.00));
+  return EvenNumber;
+}
+
 
 
 function createGridHelper(){
@@ -155,8 +167,16 @@ function createGridPlane(){
   return plane;
 }
 
-const grid = createGridHelper();
-const gridPlane = createGridPlane();
+const div=GridMinSize/Gridstep;
+let Griddivisions = CeiltoEven(div);
+let actualGridSize = Gridstep*Griddivisions;
+console.log("il numero di suddivisioni è: ", Griddivisions);
+console.log("la dimensione effettiva della griglia è: ", actualGridSize);
+let GridcolorCenterLine = myGrid.gridColor;//0x808080;//= ;
+let GridcolorGrid = myGrid.gridColor;
+
+let grid = createGridHelper();
+let gridPlane = createGridPlane();
 const axesHelper = new AxesHelper( actualGridSize*0.20 );
 axesHelper.renderOrder = 2;
 scene.add( axesHelper );
