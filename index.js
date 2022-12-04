@@ -108,7 +108,7 @@ const myGrid = {
 	//myString: "lil-gui",
 	step: 1.50,
   gridMinimumSize:30,
-  gridColor:0xb5b5b5
+  gridColor:0x6e6e6e
 };
 
 gui.add( myGrid, 'step', 0.05, 5.0, 0.05).name('Grid Step').onChange(()=>{
