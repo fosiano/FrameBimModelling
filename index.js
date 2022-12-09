@@ -65,6 +65,20 @@ var count=0;
 
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js';
 
+
+//three-mesh-bvh
+import { 
+  computeBoundsTree, 
+  disposeBoundsTree, 
+  acceleratedRaycast 
+} from 'three-mesh-bvh';
+BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
+BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
+Mesh.prototype.raycast = acceleratedRaycast;
+//three-mesh-bvh
+
+
+
 // Controls
 CameraControls.install( { THREE: subsetOfTHREE } );
 
@@ -157,6 +171,12 @@ function createGridHelper(){
 
 function createGridPlane(){
   const grdPln = new PlaneGeometry( actualGridSize, actualGridSize, Griddivisions, Griddivisions );
+
+  //three-mesh-bvh
+  grdPln.computeBoundsTree();
+  //three-mesh-bvh
+
+
   const plane = new Mesh( grdPln, gridPlaneMaterial );
   plane.renderOrder = 0;
   scene.add( plane );
@@ -336,6 +356,12 @@ function setCursorByID(id,cursorStyle) {
 
 // Picking
 const raycaster = new Raycaster();
+
+//three-mesh-bvh
+raycaster.firstHitOnly = true;
+//three-mesh-bvh
+
+
 const mouse = new Vector2();
 
 const pMaterial = new PointsMaterial({

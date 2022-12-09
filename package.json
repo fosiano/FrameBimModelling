@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "camera-controls": "^1.37.4",
-    "three": "^0.146.0"
+    "three": "^0.146.0",
+    "three-mesh-bvh": "^0.5.19"
   }
 }
