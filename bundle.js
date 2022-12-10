@@ -41046,21 +41046,33 @@ const gui = new GUI();
 const myGrid = {
 	//myBoolean: true,
 	//myString: "lil-gui",
-	step: 1.50,
+	step: 1.00,
   gridMinimumSize:30,
-  gridColor:0x6e6e6e
+  gridColor:0x6e6e6e,
+  gridSnap:true,
+  snapRadius: 0.3
 };
 
-gui.add( myGrid, 'step', 0.05, 5.0, 0.05).name('Grid Step').onChange(()=>{
+var f1 = gui.addFolder('Formato Griglia');
+
+f1.add( myGrid, 'step', 0.05, 5.0, 0.05).name('Grid Step').onChange(()=>{
   gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
 });  
-gui.add( myGrid, 'gridMinimumSize', 1.00, 100, 1.00).name('Min Grid Dimension').onChange(()=>{
+f1.add( myGrid, 'gridMinimumSize', 1.00, 100, 1.00).name('Grid Size (min value)').onChange(()=>{
   gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
 });    
-gui.addColor(myGrid, 'gridColor').name('Grid Color').onChange(() => {
+f1.addColor(myGrid, 'gridColor').name('Grid Color').onChange(() => {
 	//grid.material.color.set(myGrid.gridColor);
   gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
 });
+
+var f2 = gui.addFolder('Snapping');
+f2.add(myGrid, 'gridSnap').name('Snap to Grid ON').onChange(() => {
+});
+
+f2.add( myGrid, 'snapRadius', 0.1, 0.50, 0.05).name('Snap Radius').onChange(()=>{
+  snapRadius = myGrid.snapRadius;
+});    
 
 function gridUpdate(MinSize, step, color){
   const div=MinSize/step;
@@ -41192,6 +41204,7 @@ const whiteMesh = new Mesh(geometry, whiteMaterial);
 whiteMesh.position.x -= 10.0;
 whiteMesh.position.z += +2.5;
 whiteMesh.scale.z=5.0;
+whiteMesh.renderOrder=1;
 
 const edgesGeo = new EdgesGeometry(geometry);
 const edgesMaterial = new LineBasicMaterial({color:0x000000, linewidth: 2});
@@ -41299,7 +41312,7 @@ const p0 = [];
 p0.push(new Vector3(0, 0, 0) );
 const pGeometry = new BufferGeometry().setFromPoints( p0);
 const markerMesh = new Points( pGeometry, pMaterial );
-const snapRadius = 0.3; // How big radius we search for vertices near the mouse click
+let snapRadius = myGrid.snapRadius; // How big radius we search for vertices near the mouse click
 scene.add(markerMesh);
 markerMesh.visible=false;
 
