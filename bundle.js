@@ -41193,7 +41193,7 @@ redColumnMesh.position.z += redColumnHeight/2;
 redColumnMesh.scale.z=redColumnHeight;
 
 const realMesh = new Mesh(geometry, realMaterial);
-realMesh.scale.z=4.0;
+realMesh.scale.z=10.0;
 realMesh.scale.y=0.5;
 realMesh.position.x = -0.5;
 realMesh.position.z = 5.5;
