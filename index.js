@@ -124,13 +124,15 @@ const myGrid = {
   gridMinimumSize:30,
   gridColor:0x6e6e6e,
   gridSnap:true,
-  snapRadius: 0.3
+  RelativeSnapRadius: 0.25
 };
+
 
 var f1 = gui.addFolder('Formato Griglia');
 
 f1.add( myGrid, 'step', 0.05, 5.0, 0.05).name('Grid Step').onChange(()=>{
   gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
+  snapRadius = myGrid.RelativeSnapRadius*myGrid.step;
 });  
 f1.add( myGrid, 'gridMinimumSize', 1.00, 100, 1.00).name('Grid Size (min value)').onChange(()=>{
   gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
@@ -141,13 +143,11 @@ f1.addColor(myGrid, 'gridColor').name('Grid Color').onChange(() => {
 })
 
 var f2 = gui.addFolder('Snapping');
-f2.add(myGrid, 'gridSnap').name('Snap to Grid ON').onChange(() => {
-	//grid.material.color.set(myGrid.gridColor);
-  const aaaa=1;
-})
+f2.add(myGrid, 'gridSnap').name('Snap to Grid');
 
-f2.add( myGrid, 'snapRadius', 0.1, 0.50, 0.05).name('Snap Radius').onChange(()=>{
-  snapRadius = myGrid.snapRadius;
+f2.add( myGrid, 'RelativeSnapRadius', 0.05, 0.50, 0.05).name('Relative Snap Radius').onChange(()=>{
+  snapRadius = myGrid.RelativeSnapRadius*myGrid.step;
+  
 });    
 
 function gridUpdate(MinSize, step, color){
@@ -269,7 +269,7 @@ redColumnMesh.position.z += redColumnHeight/2;
 redColumnMesh.scale.z=redColumnHeight;
 
 const realMesh = new Mesh(geometry, realMaterial);
-realMesh.scale.z=10.0;
+realMesh.scale.z=4.0;
 realMesh.scale.y=0.5;
 realMesh.position.x = -0.5;
 realMesh.position.z = 5.5;
@@ -388,7 +388,7 @@ const p0 = [];
 p0.push(new Vector3(0, 0, 0) );
 const pGeometry = new BufferGeometry().setFromPoints( p0);
 const markerMesh = new Points( pGeometry, pMaterial );
-let snapRadius = myGrid.snapRadius; // How big radius we search for vertices near the mouse click
+let snapRadius = myGrid.RelativeSnapRadius*myGrid.step; // How big radius we search for vertices near the mouse click
 scene.add(markerMesh);
 markerMesh.visible=false;
 
@@ -440,7 +440,7 @@ function Snap(intersections, snapRadius){
     const indexMin = distance.indexOf(mindistance);
 
     if (mindistance<snapRadius){
-      setCursorByID('three-canvas','crosshair');
+      //setCursorByID('three-canvas','crosshair');
     // markerMesh.visible=true;
       //console.log(markerMesh.position);
       snp = {
@@ -468,7 +468,7 @@ window.addEventListener('mousemove', (event)=>{
   const intersections = raycaster.intersectObject(gridPlane);
   if(!intersections.length==0){
     const Snpd=Snap(intersections, snapRadius)
-    if (Snpd.snapped){
+    if ((Snpd.snapped)&&(myGrid.gridSnap)){
       setCursorByID('three-canvas','crosshair'); 
       markerMesh.position.x=Snpd.x;
       markerMesh.position.y=Snpd.y;
@@ -487,6 +487,7 @@ window.addEventListener('mousemove', (event)=>{
       
       tip.textContent = `(${ip.x.toFixed(2)}, ${ip.y.toFixed(2)})`;
       mouseLabel.visible=true;
+      //setCursorByID('three-canvas','default');
     }
   }
 });
@@ -500,7 +501,7 @@ window.addEventListener('mousedown', (event)=>{
   const intersections = raycaster.intersectObject(gridPlane);
   if(!intersections.length==0){
     const Snpd=Snap(intersections, snapRadius)
-    if (Snpd.snapped){
+    if ((Snpd.snapped)&&(myGrid.gridSnap)){
       setCursorByID('three-canvas','crosshair');
       const newColumnHeight=5.0;
       const newColumnMesh = new Mesh(geometry, redMaterial);
