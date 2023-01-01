@@ -41050,15 +41050,18 @@ const myGrid = {
   gridMinimumSize:30,
   gridColor:0x6e6e6e,
   gridSnap:true,
-  RelativeSnapRadius: 0.25
+  relativeSnapRadius: 0.25,
+  addColumns:true,
+  columnHeight:8,
+  addBeams:false
 };
 
 
-var f1 = gui.addFolder('Formato Griglia');
+var f1 = gui.addFolder('Grid Format');
 
 f1.add( myGrid, 'step', 0.05, 5.0, 0.05).name('Grid Step').onChange(()=>{
   gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
-  snapRadius = myGrid.RelativeSnapRadius*myGrid.step;
+  snapRadius = myGrid.relativeSnapRadius*myGrid.step;
 });  
 f1.add( myGrid, 'gridMinimumSize', 1.00, 100, 1.00).name('Grid Size (min value)').onChange(()=>{
   gridUpdate(myGrid.gridMinimumSize, myGrid.step, myGrid.gridColor);
@@ -41071,9 +41074,24 @@ f1.addColor(myGrid, 'gridColor').name('Grid Color').onChange(() => {
 var f2 = gui.addFolder('Snapping');
 f2.add(myGrid, 'gridSnap').name('Snap to Grid');
 
-f2.add( myGrid, 'RelativeSnapRadius', 0.05, 0.50, 0.05).name('Relative Snap Radius').onChange(()=>{
-  snapRadius = myGrid.RelativeSnapRadius*myGrid.step;
-  
+f2.add( myGrid, 'relativeSnapRadius', 0.05, 0.50, 0.05).name('Relative Snap Radius').onChange(()=>{
+  snapRadius = myGrid.relativeSnapRadius*myGrid.step;  
+});    
+
+var f3 = gui.addFolder('Inserting');
+f3.add(myGrid, 'addColumns').name('Add Columns').listen().onChange(()=>{
+  if (myGrid.addColumns) {
+    myGrid.addBeams=false; 
+  }   
+});   
+
+f3.add(myGrid, 'columnHeight', 0.50, 10.0, 0.50).name('Column Height');
+f3.add(myGrid, 'addBeams').name('Add Beams').listen().onChange(()=>{
+  if (myGrid.addBeams) {
+    myGrid.addColumns=false; 
+    console.log('myGrid.addBeams = ', myGrid.addBeams);
+    console.log('myGrid.addColumns = ', myGrid.addColumns);
+  }   
 });    
 
 function gridUpdate(MinSize, step, color){
@@ -41314,7 +41332,7 @@ const p0 = [];
 p0.push(new Vector3(0, 0, 0) );
 const pGeometry = new BufferGeometry().setFromPoints( p0);
 const markerMesh = new Points( pGeometry, pMaterial );
-let snapRadius = myGrid.RelativeSnapRadius*myGrid.step; // How big radius we search for vertices near the mouse click
+let snapRadius = myGrid.relativeSnapRadius*myGrid.step; // How big radius we search for vertices near the mouse click
 scene.add(markerMesh);
 markerMesh.visible=false;
 
@@ -41425,20 +41443,34 @@ window.addEventListener('mousedown', (event)=>{
   setCursorByID('three-canvas','default');
   raycaster.setFromCamera(mouse, camera);
   const intersections = raycaster.intersectObject(gridPlane);
-  if(!intersections.length==0){
-    const Snpd=Snap(intersections, snapRadius);
-    if ((Snpd.snapped)&&(myGrid.gridSnap)){
-      setCursorByID('three-canvas','crosshair');
-      const newColumnHeight=5.0;
-      const newColumnMesh = new Mesh(geometry, redMaterial);
+  if((!intersections.length==0)&&(myGrid.addColumns)){
+    const newColumnHeight=myGrid.columnHeight;
+    const newColumnMesh = new Mesh(geometry, redMaterial);
+    Colums[count]=newColumnMesh;
+    newColumnMesh.scale.z=newColumnHeight;
+    if (myGrid.gridSnap){    
+      const Snpd=Snap(intersections, snapRadius);
+      if (Snpd.snapped){
+        setCursorByID('three-canvas','crosshair');
+        Colums[count]=newColumnMesh;
+        newColumnMesh.scale.z=newColumnHeight;
+        newColumnMesh.position.x=Snpd.x;
+        newColumnMesh.position.y=Snpd.y;
+        newColumnMesh.position.z=Snpd.z + newColumnHeight/2;
+        scene.add(newColumnMesh);
+        count++;
+      }
+    }
+    else {
+      const ip=intersections[0].point;  
       Colums[count]=newColumnMesh;
       newColumnMesh.scale.z=newColumnHeight;
-      newColumnMesh.position.x=Snpd.x;
-      newColumnMesh.position.y=Snpd.y;
-      newColumnMesh.position.z=Snpd.z + newColumnHeight/2;
+      newColumnMesh.position.x=ip.x;
+      newColumnMesh.position.y=ip.y;
+      newColumnMesh.position.z=ip.z+ newColumnHeight/2;
       scene.add(newColumnMesh);
-      count++;
-    }
+      count++;      
+    } 
   }
   console.log(Colums);
 });
